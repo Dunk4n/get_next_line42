@@ -6,13 +6,34 @@
 /*   By: niduches <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/09 12:27:24 by niduches          #+#    #+#             */
-/*   Updated: 2019/10/18 14:15:35 by niduches         ###   ########.fr       */
+/*   Updated: 2019/10/18 18:17:28 by niduches         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <unistd.h>
 #include <stdlib.h>
 #include "get_next_line.h"
+
+static void	to_nl(char *buff)
+{
+	size_t	i;
+	size_t	j;
+
+	i = 0;
+	while (i < BUFFER_SIZE && buff[i] && buff[i] != '\n')
+		i++;
+	j = 0;
+	while (j < BUFFER_SIZE && buff[j])
+	{
+		if (i + 1 < BUFFER_SIZE && buff[i + 1] != '\0')
+			buff[j] = buff[1 + i++];
+		else if (j < BUFFER_SIZE)
+			buff[j] = '\0';
+		j++;
+	}
+	while (j < BUFFER_SIZE)
+		buff[j++] = '\0';
+}
 
 static int	put_in_buff(char *line, char *tmp, ssize_t size, char *buff)
 {
@@ -68,7 +89,7 @@ int			get_next_line(int fd, char **line)
 	size_t		i;
 	int			rt;
 
-	if (fd == -1)
+	if (fd < 0 || !line)
 		return (-1);
 	*line = NULL;
 	i = 0;

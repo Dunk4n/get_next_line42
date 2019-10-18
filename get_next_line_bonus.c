@@ -6,7 +6,7 @@
 /*   By: niduches <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/09 17:55:02 by niduches          #+#    #+#             */
-/*   Updated: 2019/10/18 11:35:12 by niduches         ###   ########.fr       */
+/*   Updated: 2019/10/18 18:45:49 by niduches         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -114,18 +114,18 @@ int			get_next_line(int fd, char **line)
 	static char	buff[NB_FD + 1][BUFFER_SIZE] = {"", "", "", "", "", ""};
 	size_t		i;
 
-	if (fd == -1)
+	if (fd < 0 || !line)
 		return (-1);
 	*line = NULL;
 	i = 0;
-	while (i < NB_FD)
+	while (fd >= 0 && i < NB_FD)
 	{
 		if (fd == fds[i])
 			return (get_next_line_buff(fd, line, buff[i + 1]));
 		i++;
 	}
 	i = 0;
-	while (i < NB_FD)
+	while (fd >= 0 && i < NB_FD)
 	{
 		if (fds[i] == -1)
 		{
