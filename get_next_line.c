@@ -6,34 +6,13 @@
 /*   By: niduches <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/09 12:27:24 by niduches          #+#    #+#             */
-/*   Updated: 2019/10/18 12:41:48 by niduches         ###   ########.fr       */
+/*   Updated: 2019/10/18 14:15:35 by niduches         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <unistd.h>
 #include <stdlib.h>
 #include "get_next_line.h"
-
-static void	to_nl(char *buff)
-{
-	size_t	i;
-	size_t	j;
-
-	i = 0;
-	while (i < BUFFER_SIZE && buff[i] && buff[i] != '\n')
-		i++;
-	j = 0;
-	while (j < BUFFER_SIZE && buff[j])
-	{
-		if (i + 1 < BUFFER_SIZE && buff[i + 1] != '\0')
-			buff[j] = buff[1 + i++];
-		else if (j < BUFFER_SIZE)
-			buff[j] = '\0';
-		j++;
-	}
-	while (j < BUFFER_SIZE)
-		buff[j++] = '\0';
-}
 
 static int	put_in_buff(char *line, char *tmp, ssize_t size, char *buff)
 {
@@ -68,7 +47,6 @@ static char	*next_line(int fd, char *buff, size_t nb, int *rt)
 		i++;
 	if (tmp[i] == '\n' || size <= 0)
 	{
-		printf("[%d]\n", nb + i + 1);
 		if (!(line = malloc((nb + i + 1) * sizeof(char))))
 			return (NULL);
 		line[nb + i] = '\0';
@@ -103,10 +81,7 @@ int			get_next_line(int fd, char **line)
 			return (-1);
 		(*line)[i] = '\0';
 		while (i-- > 0)
-		{
-			printf("i = [%d], [%c]\n", i, buff[i]);
 			(*line)[i] = buff[i];
-		}
 	}
 	else if (buff[i] != '\n' && !(*line = next_line(fd, buff, i, &rt)))
 		return (-1);
