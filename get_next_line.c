@@ -6,7 +6,7 @@
 /*   By: niduches <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/09 12:27:24 by niduches          #+#    #+#             */
-/*   Updated: 2019/10/09 18:39:51 by niduches         ###   ########.fr       */
+/*   Updated: 2019/10/18 12:41:48 by niduches         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,51 +20,59 @@ static void	to_nl(char *buff)
 	size_t	j;
 
 	i = 0;
-	while (buff[i] && buff[i] != '\n')
+	while (i < BUFFER_SIZE && buff[i] && buff[i] != '\n')
 		i++;
 	j = 0;
-	while (buff[j])
+	while (j < BUFFER_SIZE && buff[j])
 	{
-		if (buff[i + 1] != '\0')
+		if (i + 1 < BUFFER_SIZE && buff[i + 1] != '\0')
 			buff[j] = buff[1 + i++];
-		else
+		else if (j < BUFFER_SIZE)
 			buff[j] = '\0';
 		j++;
 	}
+	while (j < BUFFER_SIZE)
+		buff[j++] = '\0';
 }
 
-static void	put_in_buff(char *line, char *tmp, size_t size, char *buff)
+static int	put_in_buff(char *line, char *tmp, ssize_t size, char *buff)
 {
 	size_t	i;
+	int		ret;
 
 	i = 0;
-	while (buff[i])
+	ret = (size > 0) ? 1 : 0;
+	if (size < 0)
+		ret = -1;
+	while (i < BUFFER_SIZE && buff[i])
 	{
 		line[i] = buff[i];
 		i++;
 	}
 	while (size-- > 0)
 		buff[size] = tmp[size];
+	return (ret);
 }
 
 static char	*next_line(int fd, char *buff, size_t nb, int *rt)
 {
 	char	tmp[BUFFER_SIZE];
 	char	*line;
-	size_t	i;
-	size_t	size;
+	ssize_t	i;
+	ssize_t	size;
 
+	tmp[0] = '\0';
 	size = read(fd, tmp, BUFFER_SIZE);
 	i = 0;
 	while (i < size && tmp[i] && tmp[i] != '\n')
 		i++;
-	if (tmp[i] == '\n' || !size)
+	if (tmp[i] == '\n' || size <= 0)
 	{
+		printf("[%d]\n", nb + i + 1);
 		if (!(line = malloc((nb + i + 1) * sizeof(char))))
 			return (NULL);
-		*rt = (!size) ? 0 : 1;
-		put_in_buff(line, tmp, size, buff);
 		line[nb + i] = '\0';
+		*rt = put_in_buff(line, tmp, size, buff);
 		while (i-- > 0)
 			line[nb + i] = tmp[i];
 		return (line);
@@ -82,9 +90,9 @@ int			get_next_line(int fd, char **line)
 	size_t		i;
 	int			rt;
 
-	*line = NULL;
 	if (fd == -1)
 		return (-1);
+	*line = NULL;
 	i = 0;
 	rt = 1;
 	while (i < BUFFER_SIZE && buff[i] && buff[i] != '\n')
@@ -95,10 +103,15 @@ int			get_next_line(int fd, char **line)
 			return (-1);
 		(*line)[i] = '\0';
 		while (i-- > 0)
+		{
+			printf("i = [%d], [%c]\n", i, buff[i]);
 			(*line)[i] = buff[i];
+		}
 	}
 	else if (buff[i] != '\n' && !(*line = next_line(fd, buff, i, &rt)))
 		return (-1);
 	to_nl(buff);
+	if (rt == 0 && *line && (*line)[0])
+		rt = 1;
 	return (rt);
 }
