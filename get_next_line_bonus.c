@@ -6,7 +6,7 @@
 /*   By: niduches <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/09 17:55:02 by niduches          #+#    #+#             */
-/*   Updated: 2019/10/18 18:45:49 by niduches         ###   ########.fr       */
+/*   Updated: 2019/10/20 17:04:42 by niduches         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -110,29 +110,24 @@ static int	get_next_line_buff(int fd, char **line, char *buff)
 
 int			get_next_line(int fd, char **line)
 {
-	static int	fds[NB_FD] = {-1, -1, -1, -1, -1};
-	static char	buff[NB_FD + 1][BUFFER_SIZE] = {"", "", "", "", "", ""};
+	static t_nl	fdbuff[NB_FD];
 	size_t		i;
+	int			ret;
 
 	if (fd < 0 || !line)
 		return (-1);
+	ret = 0;
 	*line = NULL;
 	i = 0;
-	while (fd >= 0 && i < NB_FD)
-	{
-		if (fd == fds[i])
-			return (get_next_line_buff(fd, line, buff[i + 1]));
-		i++;
-	}
+	while (i < NB_FD)
+		if (fd == fdbuff[i++].fd - 1)
+			return (get_next_line_buff(fd, line, fdbuff[i - 1].buff));
 	i = 0;
-	while (fd >= 0 && i < NB_FD)
-	{
-		if (fds[i] == -1)
+	while (i < NB_FD)
+		if (fdbuff[i++].fd == 0)
 		{
-			fds[i] = fd;
-			return (get_next_line_buff(fd, line, buff[i + 1]));
+			fdbuff[i - 1].fd = fd + 1;
+			return (get_next_line_buff(fd, line, fdbuff[i - 1].buff));
 		}
-		i++;
-	}
-	return (get_next_line_buff(fd, line, buff[0]));
+	return (-1);
 }
