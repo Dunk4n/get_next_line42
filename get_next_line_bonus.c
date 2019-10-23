@@ -6,7 +6,7 @@
 /*   By: niduches <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/09 17:55:02 by niduches          #+#    #+#             */
-/*   Updated: 2019/10/23 14:25:17 by niduches         ###   ########.fr       */
+/*   Updated: 2019/10/23 19:52:40 by niduches         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -106,8 +106,6 @@ static int	get_next_line_buff(int fd, char **line, char *buff)
 	else if (buff[i] != '\n' && !(*line = next_line(fd, buff, i, &rt)))
 		return (-1);
 	to_nl(buff);
-	if (rt == 0 && *line && (*line)[0])
-		rt = 1;
 	return (rt);
 }
 
