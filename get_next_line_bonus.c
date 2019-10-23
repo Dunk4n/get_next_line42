@@ -6,7 +6,7 @@
 /*   By: niduches <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/09 17:55:02 by niduches          #+#    #+#             */
-/*   Updated: 2019/10/20 17:04:42 by niduches         ###   ########.fr       */
+/*   Updated: 2019/10/23 14:25:17 by niduches         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,6 +49,9 @@ static int	put_in_buff(char *line, char *tmp, ssize_t size, char *buff)
 		line[i] = buff[i];
 		i++;
 	}
+	i = 0;
+	while (i < BUFFER_SIZE)
+		buff[i++] = '\0';
 	while (size-- > 0)
 		buff[size] = tmp[size];
 	return (ret);
