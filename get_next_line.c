@@ -6,7 +6,7 @@
 /*   By: niduches <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/09 12:27:24 by niduches          #+#    #+#             */
-/*   Updated: 2019/10/23 19:52:29 by niduches         ###   ########.fr       */
+/*   Updated: 2019/11/05 16:51:45 by niduches         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,7 +69,7 @@ static char	*next_line(int fd, char *buff, size_t nb, int *rt)
 	i = 0;
 	while (i < size && tmp[i] && tmp[i] != '\n')
 		i++;
-	if (tmp[i] == '\n' || size <= 0)
+	if ((i < size && tmp[i] == '\n') || size <= 0)
 	{
 		if (!(line = malloc((nb + i + 1) * sizeof(char))))
 			return (NULL);
